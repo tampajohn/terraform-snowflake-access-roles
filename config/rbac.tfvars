@@ -20,15 +20,18 @@ access_grants = {
     "CREATE SEQUENCE"          = ["DBO"]
   }
   table = {
-    "SELECT" = ["R", "RW", "DBO"]
-    "UPDATE" = ["RW", "DBO"]
-    "INSERT" = ["RW", "DBO"]
-    "DELETE" = ["R", "RW", "DBO"]
+    "OWNERSHIP" = ["DBO"]
+    "SELECT"    = ["R", "RW", "DBO"]
+    "UPDATE"    = ["RW", "DBO"]
+    "INSERT"    = ["RW", "DBO"]
+    "DELETE"    = ["RW", "DBO"]
   }
   view = {
+    "OWNERSHIP" = ["DBO"]
     "SELECT" = ["R", "RW", "DBO"]
   }
   materialized_view = {
+    "OWNERSHIP" = ["DBO"]
     "SELECT" = ["R", "RW", "DBO"]
   }
 }

@@ -97,6 +97,17 @@ resource "snowflake_role" "access_role" {
   name = each.key
 }
 
+resource "snowflake_role_grants" "grants" {
+  for_each = {
+    for schema_role in local.schema_roles : "_${schema_role.database}_${schema_role.schema}_${schema_role.role_type}" => schema_role
+  }
+  role_name = each.key
+
+  roles = [
+    "SYSADMIN",
+  ]
+}
+
 # Generates grants for each database defined in var.database_structure, based on values in access_grants["DATABASE"]
 resource "snowflake_database_grant" "db_grant" {
   for_each = {

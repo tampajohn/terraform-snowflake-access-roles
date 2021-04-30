@@ -1,15 +1,15 @@
 database_structure = [{
-  name    = "JQA_PROD"
-  comment = "An example production database",
+  name    = "NDG"
+  comment = "NASCAR Data Garage database",
   schemas = [
     {
-      name       = "RAW"
-      comment    = "Raw landing data for this db."
+      name       = "DM"
+      comment    = "Data Model Schema"
       is_managed = true
     },
     {
-      name       = "ANALYTICS"
-      comment    = "Analytics data for this db."
+      name       = "EUL"
+      comment    = "End-User Layer"
       is_managed = true
     }
   ]
