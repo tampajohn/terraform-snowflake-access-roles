@@ -1,0 +1,6 @@
+snowflake_account       = "aca25266"
+snowflake_region        = "us-east-1"
+snowflake_user          = "SVC_TERRAFORM"
+snowflake_key_path      = "~/.ssh/snowflake_tf_snow_key"
+snowflake_role          = "SYSADMIN"
+snowflake_security_role = "SECURITYADMIN"
