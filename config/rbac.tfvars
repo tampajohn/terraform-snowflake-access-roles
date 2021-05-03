@@ -1,37 +1,41 @@
 
 access_grants = {
   database = {
-    "USAGE" = ["R", "RW", "DBO"]
+    "USAGE" = ["R", "RW", "FULL"]
   },
   schema = {
-    "OWNERSHIP"                = ["DBO"]
-    "USAGE"                    = ["R", "RW", "DBO"]
-    "CREATE TABLE"             = ["DBO"]
-    "CREATE VIEW"              = ["DBO"]
-    "CREATE STAGE"             = ["DBO"]
-    "CREATE PIPE"              = ["DBO"]
-    "CREATE STREAM"            = ["DBO"]
-    "CREATE TASK"              = ["DBO"]
-    "CREATE FUNCTION"          = ["DBO"]
-    "CREATE PROCEDURE"         = ["DBO"]
-    "CREATE EXTERNAL TABLE"    = ["DBO"]
-    "CREATE MATERIALIZED VIEW" = ["DBO"]
-    "CREATE PIPE"              = ["DBO"]
-    "CREATE SEQUENCE"          = ["DBO"]
+    "OWNERSHIP"                = ["FULL"]
+    "USAGE"                    = ["R", "RW", "FULL"]
+    "CREATE TABLE"             = ["FULL"]
+    "CREATE VIEW"              = ["FULL"]
+    "CREATE STAGE"             = ["FULL"]
+    "CREATE PIPE"              = ["FULL"]
+    "CREATE STREAM"            = ["FULL"]
+    "CREATE TASK"              = ["FULL"]
+    "CREATE FUNCTION"          = ["FULL"]
+    "CREATE PROCEDURE"         = ["FULL"]
+    "CREATE EXTERNAL TABLE"    = ["FULL"]
+    "CREATE MATERIALIZED VIEW" = ["FULL"]
+    "CREATE PIPE"              = ["FULL"]
+    "CREATE SEQUENCE"          = ["FULL"]
   }
   table = {
-    "OWNERSHIP" = ["DBO"]
-    "SELECT"    = ["R", "RW", "DBO"]
-    "UPDATE"    = ["RW", "DBO"]
-    "INSERT"    = ["RW", "DBO"]
-    "DELETE"    = ["RW", "DBO"]
+    "OWNERSHIP" = ["FULL"]
+    "SELECT"    = ["R", "RW", "FULL"]
+    "UPDATE"    = ["RW", "FULL"]
+    "INSERT"    = ["RW", "FULL"]
+    "DELETE"    = ["RW", "FULL"]
   }
   view = {
-    "OWNERSHIP" = ["DBO"]
-    "SELECT" = ["R", "RW", "DBO"]
+    "OWNERSHIP" = ["FULL"]
+    "SELECT" = ["R", "RW", "FULL"]
   }
   materialized_view = {
-    "OWNERSHIP" = ["DBO"]
-    "SELECT" = ["R", "RW", "DBO"]
+    "OWNERSHIP" = ["FULL"]
+    "SELECT" = ["R", "RW", "FULL"]
+  }
+  access_role_hierarchy = {
+    "R": ["RW"]
+    "RW": ["FULL"]
   }
 }

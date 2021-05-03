@@ -7,6 +7,31 @@ terraform {
   }
 }
 
+
+variable "database_structure" {
+  type = list(object({
+    name    = string
+    comment = string
+    schemas = list(object({
+      name       = string
+      comment    = string
+      is_managed = bool
+    }))
+  }))
+}
+
+variable "access_grants" {
+  type = object({
+    database          = map(list(string))
+    schema            = map(list(string))
+    table             = map(list(string))
+    view              = map(list(string))
+    materialized_view = map(list(string))
+    access_role_hierarchy = map(list(string))
+
+  })
+}
+
 locals {
   access_roles = distinct(flatten([
     for object_type in var.access_grants : [
@@ -87,6 +112,15 @@ locals {
       }
     ]
   ])
+
+  role_grants = flatten([
+    for schema in local.schemas : [
+      for granter_key, grantees in var.access_grants.access_role_hierarchy : {
+        from: "_${schema.database}_${schema.name}_${granter_key}"
+        to: [for grantee_key in grantees : "_${schema.database}_${schema.name}_${grantee_key}"]
+      }
+    ]
+  ])
 }
 
 # Generates a role PER database PER schema PER access_role like: _SNOWFLAKE_PUBLIC_R, _SNOWFLAKE_PUBLIC_RW, etc
@@ -97,15 +131,12 @@ resource "snowflake_role" "access_role" {
   name = each.key
 }
 
-resource "snowflake_role_grants" "grants" {
+resource "snowflake_role_grants" "role_grants" {
   for_each = {
-    for schema_role in local.schema_roles : "_${schema_role.database}_${schema_role.schema}_${schema_role.role_type}" => schema_role
+    for grant in local.role_grants : grant.from => grant.to
   }
-  role_name = each.key
-
-  roles = [
-    "SYSADMIN",
-  ]
+  role_name  = each.key
+  roles         = each.value
 }
 
 # Generates grants for each database defined in var.database_structure, based on values in access_grants["DATABASE"]
@@ -159,26 +190,4 @@ resource "snowflake_view_grant" "view_grant" {
   privilege     = each.value.privilege
   roles         = each.value.roles
   on_future     = true
-}
-
-variable "database_structure" {
-  type = list(object({
-    name    = string
-    comment = string
-    schemas = list(object({
-      name       = string
-      comment    = string
-      is_managed = bool
-    }))
-  }))
-}
-
-variable "access_grants" {
-  type = object({
-    database          = map(list(string))
-    schema            = map(list(string))
-    table             = map(list(string))
-    view              = map(list(string))
-    materialized_view = map(list(string))
-  })
 }

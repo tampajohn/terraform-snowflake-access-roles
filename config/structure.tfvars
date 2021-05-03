@@ -1,6 +1,6 @@
 database_structure = [{
-  name    = "NDG"
-  comment = "NASCAR Data Garage database",
+  name    = "PROTO"
+  comment = "PROTO Database",
   schemas = [
     {
       name       = "DM"

@@ -1,4 +1,3 @@
-
 terraform {
   extra_arguments "common_vars" {
     commands = ["apply", "import", "plan", "destroy"]
