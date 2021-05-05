@@ -7,7 +7,7 @@ database_structure = [{
       comment    = "Data Model Schema"
       is_managed = true
       functional_grants = {
-        "R": ["O365_SG_SNOWFLAKE_ANALYST"]
+        "R" : ["O365_SG_SNOWFLAKE_ANALYST"]
       }
     },
     {
@@ -15,17 +15,22 @@ database_structure = [{
       comment    = "End-User Layer"
       is_managed = true
       functional_grants = {
-        "R": ["O365_SG_SNOWFLAKE_ANALYST"]
-        "RW": ["O365_SG_SNOWFLAKE_DEVELOPER"]
-        "DBO": ["O365_SG_SNOWFLAKE_DBA"]
+        "R" : ["O365_SG_SNOWFLAKE_ANALYST"]
+        "RW" : ["O365_SG_SNOWFLAKE_DEVELOPER"]
+        "DBO" : ["O365_SG_SNOWFLAKE_DBA"]
       }
     }
   ]
   functional_grants = {
-    "DBO": ["O365_SG_SNOWFLAKE_DBA"]
+    "DBO" : ["O365_SG_SNOWFLAKE_DBA"]
   }
 }]
-
+########################################################################################################################
+#
+# Grants will be created with the following nomenclature: _{DBNAME}_{SCHEMANAME}_{ACCESSTYPE} and _{DBNAME}_{ACCESSTYPE}
+#     ie: _PROD_SCHEMA_R, _PROD_R
+#
+########################################################################################################################
 access_grants = {
   database = {
     "USAGE" = ["R", "RW", "DBO"]
@@ -55,15 +60,15 @@ access_grants = {
   }
   view = {
     "OWNERSHIP" = ["DBO"]
-    "SELECT" = ["R", "RW", "DBO"]
+    "SELECT"    = ["R", "RW", "DBO"]
   }
   materialized_view = {
     "OWNERSHIP" = ["DBO"]
-    "SELECT" = ["R", "RW", "DBO"]
+    "SELECT"    = ["R", "RW", "DBO"]
   }
   access_role_hierarchy = {
-    "R": ["RW"]
-    "RW": ["DBO"]
-    "DBO": [] // This will allow us to grant it to function roles specified in structure vars.
+    "R" : ["RW"]
+    "RW" : ["DBO"]
+    "DBO" : [] // This will allow us to grant it to function roles specified in structure vars.
   }
 }

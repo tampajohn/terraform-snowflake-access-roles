@@ -3,8 +3,8 @@ provider "snowflake" {
   account  = var.snowflake_account
   region   = var.snowflake_region
   username = var.snowflake_user
-  
-  private_key_path = var.snowflake_key_path 
+
+  private_key_path = var.snowflake_key_path
   role             = var.snowflake_role
 }
 
