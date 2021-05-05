@@ -5,7 +5,6 @@ terraform {
     arguments = [
       "-var-file=../config/provider.tfvars",
       "-var-file=../config/rbac.tfvars",
-      "-var-file=../config/structure.tfvars"
     ]
   }
 }
