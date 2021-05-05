@@ -16,19 +16,20 @@ variable "database_structure" {
       name       = string
       comment    = string
       is_managed = bool
+      functional_grants = map(list(string))
     }))
+    functional_grants = map(list(string))
   }))
 }
 
 variable "access_grants" {
   type = object({
-    database          = map(list(string))
-    schema            = map(list(string))
-    table             = map(list(string))
-    view              = map(list(string))
-    materialized_view = map(list(string))
+    database              = map(list(string))
+    schema                = map(list(string))
+    table                 = map(list(string))
+    view                  = map(list(string))
+    materialized_view     = map(list(string))
     access_role_hierarchy = map(list(string))
-
   })
 }
 
@@ -55,6 +56,7 @@ locals {
         name : schema.name
         database : db.name
         comment : schema.comment
+        functional_grants : db.functional_grants
         is_managed : schema.is_managed
       }
     ]
@@ -85,7 +87,12 @@ locals {
         database : database.name
         privilege : permission_key
         roles : distinct(flatten(
-          [for r in roles : [for schema_name, s in var.database_structure[database.index].schemas : ["_${database.name}_${s.name}_${r}","_${database.name}_${s.name}_${r}"]]]
+          [for r in roles : 
+            [for schema_name, s in var.database_structure[database.index].schemas : [
+              "_${database.name}_${s.name}_${r}", 
+              "_${database.name}_${r}"
+            ]]
+          ]
         ))
       }
     ]
@@ -97,7 +104,12 @@ locals {
         database : schema.database
         schema : schema.name
         privilege : permission_key
-        roles : distinct(flatten([for r in roles : ["_${schema.database}_${schema.name}_${r}","_${schema.database}_${r}" ]]))
+        roles : distinct(flatten(
+          [for r in roles : [
+            "_${schema.database}_${schema.name}_${r}", 
+            "_${schema.database}_${r}"
+          ]]
+        ))
       }
     ]
   ])
@@ -108,7 +120,12 @@ locals {
         database : schema.database
         schema : schema.name
         privilege : permission_key
-        roles : distinct(flatten([for r in roles : ["_${schema.database}_${schema.name}_${r}","_${schema.database}_${r}" ]]))
+        roles : distinct(flatten(
+          [for r in roles : [
+            "_${schema.database}_${schema.name}_${r}", 
+            "_${schema.database}_${r}"
+          ]]
+        ))
       }
     ]
   ])
@@ -119,7 +136,12 @@ locals {
         database : schema.database
         schema : schema.name
         privilege : permission_key
-        roles : distinct(flatten([for r in roles : ["_${schema.database}_${schema.name}_${r}","_${schema.database}_${r}" ]]))
+        roles : distinct(flatten(
+          [for r in roles : [
+            "_${schema.database}_${schema.name}_${r}", 
+            "_${schema.database}_${r}"
+          ]]
+        ))
       }
     ]
   ])
@@ -127,8 +149,11 @@ locals {
   role_grants = flatten([
     for schema in local.schemas : [
       for granter_key, grantees in var.access_grants.access_role_hierarchy : {
-        from: "_${schema.database}_${schema.name}_${granter_key}"
-        to: [for grantee_key in grantees : "_${schema.database}_${schema.name}_${grantee_key}"]
+        from : "_${schema.database}_${schema.name}_${granter_key}"
+        to : distinct(concat(
+          [for grantee_key in grantees : "_${schema.database}_${schema.name}_${grantee_key}"], 
+          [for functional_role in tolist(lookup(schema.functional_grants, granter_key, [])) : functional_role]
+        ))
       }
     ]
   ])
@@ -146,8 +171,8 @@ resource "snowflake_role_grants" "role_grants" {
   for_each = {
     for grant in local.role_grants : grant.from => grant.to
   }
-  role_name  = each.key
-  roles         = each.value
+  role_name = each.key
+  roles     = each.value
 }
 
 # Generates grants for each database defined in var.database_structure, based on values in access_grants["DATABASE"]

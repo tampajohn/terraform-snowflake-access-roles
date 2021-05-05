@@ -1,3 +1,31 @@
+database_structure = [{
+  name    = "NDG"
+  comment = "NASCAR Data Garage",
+  schemas = [
+    {
+      name       = "DM"
+      comment    = "Data Model Schema"
+      is_managed = true
+      functional_grants = {
+        "R": ["O365_SG_SNOWFLAKE_ANALYST"]
+      }
+    },
+    {
+      name       = "EUL"
+      comment    = "End-User Layer"
+      is_managed = true
+      functional_grants = {
+        "R": ["O365_SG_SNOWFLAKE_ANALYST"]
+        "RW": ["O365_SG_SNOWFLAKE_DEVELOPER"]
+        "DBO": ["O365_SG_SNOWFLAKE_DBA"]
+      }
+    }
+  ]
+  functional_grants = {
+    "DBO": ["O365_SG_SNOWFLAKE_DBA"]
+  }
+}]
+
 access_grants = {
   database = {
     "USAGE" = ["R", "RW", "DBO"]
@@ -36,5 +64,6 @@ access_grants = {
   access_role_hierarchy = {
     "R": ["RW"]
     "RW": ["DBO"]
+    "DBO": [] // This will allow us to grant it to function roles specified in structure vars.
   }
 }
