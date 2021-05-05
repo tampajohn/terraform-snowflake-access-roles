@@ -70,12 +70,23 @@ locals {
     ]
   ])
 
+  db_roles = flatten([
+    for db in local.databases : [
+      for access_role in local.access_roles : {
+        database : db.name
+        role_type : access_role
+      }
+    ]
+  ])
+
   database_grants = flatten([
     for database in local.databases : [
       for permission_key, roles in var.access_grants.database : {
         database : database.name
         privilege : permission_key
-        roles : flatten([for r in roles : [for schema_name, s in var.database_structure[database.index].schemas : "_${database.name}_${s.name}_${r}"]])
+        roles : distinct(flatten(
+          [for r in roles : [for schema_name, s in var.database_structure[database.index].schemas : ["_${database.name}_${s.name}_${r}","_${database.name}_${s.name}_${r}"]]]
+        ))
       }
     ]
   ])
@@ -86,7 +97,7 @@ locals {
         database : schema.database
         schema : schema.name
         privilege : permission_key
-        roles : [for r in roles : "_${schema.database}_${schema.name}_${r}"]
+        roles : distinct(flatten([for r in roles : ["_${schema.database}_${schema.name}_${r}","_${schema.database}_${r}" ]]))
       }
     ]
   ])
@@ -97,7 +108,7 @@ locals {
         database : schema.database
         schema : schema.name
         privilege : permission_key
-        roles : [for r in roles : "_${schema.database}_${schema.name}_${r}"]
+        roles : distinct(flatten([for r in roles : ["_${schema.database}_${schema.name}_${r}","_${schema.database}_${r}" ]]))
       }
     ]
   ])
@@ -108,7 +119,7 @@ locals {
         database : schema.database
         schema : schema.name
         privilege : permission_key
-        roles : [for r in roles : "_${schema.database}_${schema.name}_${r}"]
+        roles : distinct(flatten([for r in roles : ["_${schema.database}_${schema.name}_${r}","_${schema.database}_${r}" ]]))
       }
     ]
   ])
