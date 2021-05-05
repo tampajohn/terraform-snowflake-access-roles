@@ -56,7 +56,8 @@ locals {
         name : schema.name
         database : db.name
         comment : schema.comment
-        functional_grants : db.functional_grants
+        db_functional_grants : db.functional_grants
+        functional_grants : schema.functional_grants
         is_managed : schema.is_managed
       }
     ]
@@ -152,6 +153,7 @@ locals {
         from : "_${schema.database}_${schema.name}_${granter_key}"
         to : distinct(concat(
           [for grantee_key in grantees : "_${schema.database}_${schema.name}_${grantee_key}"], 
+          [for functional_role in tolist(lookup(schema.db_functional_grants, granter_key, [])) : functional_role], 
           [for functional_role in tolist(lookup(schema.functional_grants, granter_key, [])) : functional_role]
         ))
       }
