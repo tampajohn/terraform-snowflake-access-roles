@@ -17,6 +17,22 @@ database_structure = [{
       functional_grants = {
         "R" : ["O365_SG_SNOWFLAKE_ANALYST"]
         "RW" : ["O365_SG_SNOWFLAKE_DEVELOPER"]
+      }
+    }
+  ]
+  functional_grants = {
+    "DBO" : ["O365_SG_SNOWFLAKE_DEV_DBA"]
+  }
+},{
+  name    = "ODS"
+  comment = "Original Data Store",
+  schemas = [
+    {
+      name       = "APPETIZE"
+      comment    = "APPETIZE POS Database"
+      is_managed = true
+      functional_grants = {
+        "R" : ["O365_SG_SNOWFLAKE_ANALYST"]
         "DBO" : ["O365_SG_SNOWFLAKE_DBA"]
       }
     }
