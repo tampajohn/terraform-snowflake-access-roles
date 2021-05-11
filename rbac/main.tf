@@ -90,8 +90,7 @@ locals {
         roles : distinct(flatten(
           [for r in roles :
             [for schema_name, s in var.database_structure[database.index].schemas : [
-              "_${database.name}_${s.name}_${r}",
-              "_${database.name}_${r}"
+              "_${database.name}_${s.name}_${r}"
             ]]
           ]
         ))
@@ -107,8 +106,7 @@ locals {
         privilege : permission_key
         roles : distinct(flatten(
           [for r in roles : [
-            "_${schema.database}_${schema.name}_${r}",
-            "_${schema.database}_${r}"
+            "_${schema.database}_${schema.name}_${r}"
           ]]
         ))
       }
@@ -123,8 +121,7 @@ locals {
         privilege : permission_key
         roles : distinct(flatten(
           [for r in roles : [
-            "_${schema.database}_${schema.name}_${r}",
-            "_${schema.database}_${r}"
+            "_${schema.database}_${schema.name}_${r}"
           ]]
         ))
       }
@@ -139,8 +136,7 @@ locals {
         privilege : permission_key
         roles : distinct(flatten(
           [for r in roles : [
-            "_${schema.database}_${schema.name}_${r}",
-            "_${schema.database}_${r}"
+            "_${schema.database}_${schema.name}_${r}"
           ]]
         ))
       }
@@ -152,6 +148,7 @@ locals {
       for granter_key, grantees in var.access_grants.access_role_hierarchy : {
         from : "_${schema.database}_${schema.name}_${granter_key}"
         to : distinct(concat(
+          ["_${schema.database}_${granter_key}"],
           [for grantee_key in grantees : "_${schema.database}_${schema.name}_${grantee_key}"],
           [for functional_role in tolist(lookup(schema.db_functional_grants, granter_key, [])) : functional_role],
           [for functional_role in tolist(lookup(schema.functional_grants, granter_key, [])) : functional_role]
